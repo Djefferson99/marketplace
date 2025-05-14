@@ -4,6 +4,7 @@ CREATE TABLE usuarios (
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     senha TEXT NOT NULL,
+    telefone VARCHAR(20) NOT NULL,
     tipo_usuario VARCHAR(20) CHECK (tipo_usuario IN ('cliente', 'prestador')) NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -14,6 +15,9 @@ CREATE TABLE servicos (
     usuario_id INT REFERENCES usuarios(id),
     titulo VARCHAR(100) NOT NULL,
     descricao TEXT,
+    instagran TEXT,
+    facebook TEXT,
+    linkedin TEXT,
     preco NUMERIC(10, 2),
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
