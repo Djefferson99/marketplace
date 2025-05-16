@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
   res.send('API Marketplace online ✅');
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 console.log(`Porta do servidor: ${port}`);
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
