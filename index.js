@@ -11,6 +11,10 @@ app.use('/usuarios', usuarioRoutes);
 app.use('/servicos', servicoRoutes);
 app.use('/agendamentos', agendamentoRoutes);
 
+app.get('/', (req, res) => {
+  res.send('API Marketplace online ✅');
+});
+
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
