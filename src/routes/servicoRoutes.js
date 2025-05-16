@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const ServicoController = require('../controllers/servicoController');
+const autenticarToken = require('../middlewares/authMiddleware');
 
-router.get('/', ServicoController.listar);
-router.post('/', ServicoController.criar);
+router.get('/', autenticarToken, servicoController.listar);
+router.post('/', autenticarToken, servicoController.criar);
 router.put('/:id', ServicoController.atualizar);
 router.delete('/:id', ServicoController.deletar);
 
