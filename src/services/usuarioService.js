@@ -1,4 +1,5 @@
 const UsuarioModel = require('../models/usuarioModel');
+const bcrypt = require('bcryptjs');
 
 async function listar() {
   return await UsuarioModel.listarUsuarios();
@@ -11,7 +12,9 @@ async function criar(data) {
     throw new Error('Dados obrigatórios ausentes');
   }
 
-  return await UsuarioModel.criarUsuario(nome, email, senha, tipo_usuario, telefone);
+  const senhaCriptografada = await bcrypt.hash(senha, 10);
+
+  return await UsuarioModel.criarUsuario(nome, email, senhaCriptografada, tipo_usuario, telefone);
 }
 
 async function atualizar(id, data) {
@@ -21,7 +24,11 @@ async function atualizar(id, data) {
     throw new Error('Dados obrigatórios ausentes');
   }
 
-  return await UsuarioModel.atualizarUsuario(id, nome, email, senha, tipo_usuario, telefone);
+  const senhaCriptografada = await bcrypt.hash(senha, 10);
+
+  return await UsuarioModel.atualizarUsuario(
+    id, nome, email, senhaCriptografada, tipo_usuario, telefone
+  );
 }
 
 async function deletar(id) {
@@ -34,4 +41,3 @@ module.exports = {
   atualizar,
   deletar,
 };
-
