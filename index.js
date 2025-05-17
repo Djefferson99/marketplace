@@ -7,7 +7,9 @@ const usuarioRoutes = require('./src/routes/usuarioRoutes');
 const servicoRoutes = require('./src/routes/servicoRoutes');
 const agendamentoRoutes = require('./src/routes/agendamentoRoutes');
 const authRoutes = require('./src/routes/authRoutes');
+const cors = require('cors');
 
+app.use(cors({ origin: 'http://177.66.190.16:9001' }));
 app.use('/usuarios', usuarioRoutes);
 app.use('/servicos', servicoRoutes);
 app.use('/agendamentos', agendamentoRoutes);
