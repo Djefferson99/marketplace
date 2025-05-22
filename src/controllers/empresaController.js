@@ -1,10 +1,10 @@
-const Servico = require('../models/servicoModel');
+const Empresa = require('../models/empresaModel');
 
-const servicoController = {
+const empresaController = {
     create: async (req, res) => {
         try {
-            const servico = await Servico.create(req.body);
-            res.status(201).json(servico);
+            const empresa = await Empresa.create(req.body);
+            res.status(201).json(empresa);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -12,8 +12,8 @@ const servicoController = {
 
     getAll: async (req, res) => {
         try {
-            const servicos = await Servico.findAll();
-            res.status(200).json(servicos);
+            const empresas = await Empresa.findAll();
+            res.status(200).json(empresas);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -22,11 +22,11 @@ const servicoController = {
     getById: async (req, res) => {
         try {
             const { id } = req.params;
-            const servico = await Servico.findById(id);
-            if (servico) {
-                res.status(200).json(servico);
+            const empresa = await Empresa.findById(id);
+            if (empresa) {
+                res.status(200).json(empresa);
             } else {
-                res.status(404).json({ message: 'Serviço não encontrado' });
+                res.status(404).json({ message: 'Empresa não encontrada' });
             }
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -36,8 +36,8 @@ const servicoController = {
     update: async (req, res) => {
         try {
             const { id } = req.params;
-            const servico = await Servico.update(id, req.body);
-            res.status(200).json(servico);
+            const empresa = await Empresa.update(id, req.body);
+            res.status(200).json(empresa);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -46,7 +46,7 @@ const servicoController = {
     delete: async (req, res) => {
         try {
             const { id } = req.params;
-            await Servico.delete(id);
+            await Empresa.delete(id);
             res.status(204).send();
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -54,4 +54,4 @@ const servicoController = {
     }
 };
 
-module.exports = servicoController;
+module.exports = empresaController;
