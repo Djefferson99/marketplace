@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 10;
 
 const usuarioController = {
-  // Criar usuário (senha obrigatória)
+  // CREATE
   create: async (req, res) => {
     try {
       const { nome, email, senha, telefone, tipo_usuario } = req.body;
@@ -11,81 +11,70 @@ const usuarioController = {
         return res.status(400).json({ mensagem: 'Todos os campos são obrigatórios' });
       }
       const hash = await bcrypt.hash(senha, SALT_ROUNDS);
-      const novoUsuario = await Usuario.create({ nome, email, senha: hash, telefone, tipo_usuario });
+      const novoUsuario = await Usuario.create({
+        nome, email, senha: hash, telefone, tipo_usuario
+      });
       res.status(201).json(novoUsuario);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       res.status(500).json({ mensagem: 'Erro ao criar usuário' });
     }
   },
 
-  // Listar todos
+  // READ ALL
   findAll: async (req, res) => {
     try {
       const usuarios = await Usuario.findAll();
       res.json(usuarios);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       res.status(500).json({ mensagem: 'Erro ao buscar usuários' });
     }
   },
 
-  // Buscar por ID
+  // READ ONE
   findById: async (req, res) => {
     try {
       const { id } = req.params;
       const usuario = await Usuario.findById(id);
-      if (usuario) return res.json(usuario);
-      res.status(404).json({ mensagem: 'Usuário não encontrado' });
-    } catch (error) {
-      console.error(error);
+      if (!usuario) return res.status(404).json({ mensagem: 'Usuário não encontrado' });
+      res.json(usuario);
+    } catch (err) {
+      console.error(err);
       res.status(500).json({ mensagem: 'Erro ao buscar usuário' });
     }
   },
 
-  // Atualizar (senha opcional)
+  // UPDATE
   update: async (req, res) => {
     try {
       const { id } = req.params;
       const { nome, email, senha, telefone, tipo_usuario } = req.body;
-
-      // agora exigimos somente os campos não-senha
       if (!nome || !email || !telefone || !tipo_usuario) {
         return res.status(400)
           .json({ mensagem: 'Nome, email, telefone e tipo de usuário são obrigatórios' });
       }
-
-      // se enviou senha, faz hash; caso contrário, não altera
-      let hash;
+      const fields = { nome, email, telefone, tipo_usuario };
       if (senha) {
-        hash = await bcrypt.hash(senha, SALT_ROUNDS);
+        fields.senha = await bcrypt.hash(senha, SALT_ROUNDS);
       }
-
-      const usuarioAtualizado = await Usuario.update(id, {
-        nome,
-        email,
-        // só passo `senha` se hash existir
-        ...(hash && { senha: hash }),
-        telefone,
-        tipo_usuario
-      });
-
-      if (usuarioAtualizado) return res.json(usuarioAtualizado);
-      res.status(404).json({ mensagem: 'Usuário não encontrado' });
-    } catch (error) {
-      console.error(error);
+      const atualizado = await Usuario.update(id, fields);
+      if (!atualizado) return res.status(404).json({ mensagem: 'Usuário não encontrado' });
+      res.json(atualizado);
+    } catch (err) {
+      console.error(err);
       res.status(500).json({ mensagem: 'Erro ao atualizar usuário' });
     }
   },
 
-  // Deletar
+  // DELETE
   delete: async (req, res) => {
     try {
       const { id } = req.params;
       await Usuario.delete(id);
       res.json({ mensagem: 'Usuário deletado com sucesso' });
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       res.status(500).json({ mensagem: 'Erro ao deletar usuário' });
     }
   }
