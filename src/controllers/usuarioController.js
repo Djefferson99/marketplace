@@ -1,5 +1,6 @@
 const Usuario = require('../models/usuarioModel');
 const bcrypt = require('bcrypt');
+const SALT_ROUNDS = 10;
 
 const usuarioController = {
     // Criar usuário
