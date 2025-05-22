@@ -8,12 +8,14 @@ const servicoRoutes = require('./src/routes/servicoRoutes');
 const agendamentoRoutes = require('./src/routes/agendamentoRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const cors = require('cors');
+const empresaRoutes = require('./src/routes/empresaRoutes');
 
 app.use(cors({ origin: 'http://177.66.190.16:9001' }));
 app.use('/usuarios', usuarioRoutes);
 app.use('/servicos', servicoRoutes);
 app.use('/agendamentos', agendamentoRoutes);
 app.use('/', authRoutes);
+app.use('/empresas', empresaRoutes);
 
 app.get('/', (req, res) => {
   res.send('API Marketplace online ✅');
