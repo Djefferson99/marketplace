@@ -1,38 +1,39 @@
-const db = require('../database/connection');
+let usuarios = [];
+let idCounter = 1;
 
-async function listarUsuarios() {
-  const res = await db.query('SELECT * FROM usuarios');
-  return res.rows;
-}
+const usuarioModel = {
+    listar: () => {
+        return usuarios;
+    },
 
-async function criarUsuario(nome, email, senha, tipo_usuario, telefone) {
-  const res = await db.query(
-    'INSERT INTO usuarios (nome, email, senha, tipo_usuario, telefone) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-    [nome, email, senha, tipo_usuario, telefone]
-  );
-  return res.rows[0];
-}
+    buscarPorId: (id) => {
+        return usuarios.find(u => u.id === id);
+    },
 
-async function atualizarUsuario(id, nome, email, senha, tipo_usuario, telefone) {
-  const res = await db.query(
-    `UPDATE usuarios 
-     SET nome = $1, email = $2, senha = $3, tipo_usuario = $4, telefone = $5 
-     WHERE id = $6 
-     RETURNING *`,
-    [nome, email, senha, tipo_usuario, telefone, id]
-  );
-  return res.rows[0];
-}
+    criar: (usuario) => {
+        const novoUsuario = {
+            id: idCounter++,
+            nome: usuario.nome,
+            email: usuario.email,
+        };
+        usuarios.push(novoUsuario);
+        return novoUsuario;
+    },
 
-async function deletarUsuario(id) {
-  const res = await db.query('DELETE FROM usuarios WHERE id = $1 RETURNING *', [id]);
-  return res.rows[0];
-}
+    atualizar: (id, dados) => {
+        const index = usuarios.findIndex(u => u.id === id);
+        if (index !== -1) {
+            usuarios[index] = { id, ...dados };
+            return usuarios[index];
+        }
+        return null;
+    },
 
-module.exports = {
-  listarUsuarios,
-  criarUsuario,
-  atualizarUsuario,
-  deletarUsuario,
+    deletar: (id) => {
+        const existe = usuarios.some(u => u.id === id);
+        usuarios = usuarios.filter(u => u.id !== id);
+        return existe;
+    }
 };
 
+module.exports = usuarioModel;

@@ -1,47 +1,55 @@
-const UsuarioService = require('../services/usuarioService');
+const usuarioModel = require('../models/usuarioModel');
 
-async function listar(req, res) {
-  try {
-    const usuarios = await UsuarioService.listar();
-    res.json(usuarios);
-  } catch (err) {
-    res.status(500).json({ erro: err.message });
-  }
-}
+const usuarioController = {
+    listar: (req, res) => {
+        const usuarios = usuarioModel.listar();
+        res.json(usuarios);
+    },
 
-async function criar(req, res) {
-  try {
-    const novo = await UsuarioService.criar(req.body);
-    res.status(201).json(novo);
-  } catch (err) {
-    res.status(400).json({ erro: err.message });
-  }
-}
+    buscarPorId: (req, res) => {
+        const id = parseInt(req.params.id);
+        const usuario = usuarioModel.buscarPorId(id);
 
-async function atualizar(req, res) {
-  try {
-    const { id } = req.params;
-    const atualizado = await UsuarioService.atualizar(id, req.body);
-    res.json(atualizado);
-  } catch (err) {
-    res.status(400).json({ erro: err.message });
-  }
-}
+        if (usuario) {
+            res.json(usuario);
+        } else {
+            res.status(404).json({ mensagem: 'Usuário não encontrado' });
+        }
+    },
 
-async function deletar(req, res) {
-  try {
-    const { id } = req.params;
-    const deletado = await UsuarioService.deletar(id);
-    if (!deletado) return res.status(404).json({ erro: 'Usuário não encontrado' });
-    res.json({ mensagem: 'Usuário removido com sucesso' });
-  } catch (err) {
-    res.status(500).json({ erro: err.message });
-  }
-}
+    criar: (req, res) => {
+        const { nome, email } = req.body;
+        if (!nome || !email) {
+            return res.status(400).json({ mensagem: 'Nome e email são obrigatórios' });
+        }
 
-module.exports = {
-  listar,
-  criar,
-  atualizar,
-  deletar,
+        const novoUsuario = usuarioModel.criar({ nome, email });
+        res.status(201).json(novoUsuario);
+    },
+
+    atualizar: (req, res) => {
+        const id = parseInt(req.params.id);
+        const { nome, email } = req.body;
+
+        const usuarioAtualizado = usuarioModel.atualizar(id, { nome, email });
+
+        if (usuarioAtualizado) {
+            res.json(usuarioAtualizado);
+        } else {
+            res.status(404).json({ mensagem: 'Usuário não encontrado' });
+        }
+    },
+
+    deletar: (req, res) => {
+        const id = parseInt(req.params.id);
+        const deletado = usuarioModel.deletar(id);
+
+        if (deletado) {
+            res.json({ mensagem: 'Usuário deletado com sucesso' });
+        } else {
+            res.status(404).json({ mensagem: 'Usuário não encontrado' });
+        }
+    },
 };
+
+module.exports = usuarioController;
