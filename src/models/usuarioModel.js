@@ -1,39 +1,46 @@
-let usuarios = [];
-let idCounter = 1;
+const db = require('../database/connection');
 
-const usuarioModel = {
-    listar: () => {
-        return usuarios;
+const Usuario = {
+    create: async (usuario) => {
+        const { nome, email, senha, telefone, tipo_usuario } = usuario;
+        const result = await db.query(
+            `INSERT INTO usuarios 
+             (nome, email, senha, telefone, tipo_usuario) 
+             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+            [nome, email, senha, telefone, tipo_usuario]
+        );
+        return result.rows[0];
     },
 
-    buscarPorId: (id) => {
-        return usuarios.find(u => u.id === id);
+    findAll: async () => {
+        const result = await db.query('SELECT * FROM usuarios');
+        return result.rows;
     },
 
-    criar: (usuario) => {
-        const novoUsuario = {
-            id: idCounter++,
-            nome: usuario.nome,
-            email: usuario.email,
-        };
-        usuarios.push(novoUsuario);
-        return novoUsuario;
+    findById: async (id) => {
+        const result = await db.query('SELECT * FROM usuarios WHERE id = $1', [id]);
+        return result.rows[0];
     },
 
-    atualizar: (id, dados) => {
-        const index = usuarios.findIndex(u => u.id === id);
-        if (index !== -1) {
-            usuarios[index] = { id, ...dados };
-            return usuarios[index];
-        }
-        return null;
+    update: async (id, usuario) => {
+        const { nome, email, senha, telefone, tipo_usuario } = usuario;
+        const result = await db.query(
+            `UPDATE usuarios SET 
+               nome = $1, 
+               email = $2, 
+               senha = $3, 
+               telefone = $4, 
+               tipo_usuario = $5 
+             WHERE id = $6 
+             RETURNING *`,
+            [nome, email, senha, telefone, tipo_usuario, id]
+        );
+        return result.rows[0];
     },
 
-    deletar: (id) => {
-        const existe = usuarios.some(u => u.id === id);
-        usuarios = usuarios.filter(u => u.id !== id);
-        return existe;
+    delete: async (id) => {
+        await db.query('DELETE FROM usuarios WHERE id = $1', [id]);
     }
 };
 
-module.exports = usuarioModel;
+module.exports = Usuario;
