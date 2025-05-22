@@ -4,7 +4,7 @@ const UsuarioController = require('../controllers/usuarioController');
 
 router.get('/', UsuarioController.listar);
 router.post('/', UsuarioController.criar);
-router.put('/:id', UsuarioController.atualizar);
-router.delete('/:id', UsuarioController.deletar);
+router.put('/:id', autenticarToken, UsuarioController.atualizar);
+router.delete('/:id',autenticarToken, UsuarioController.deletar);
 
 module.exports = router;
