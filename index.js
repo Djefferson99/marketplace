@@ -10,7 +10,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const cors = require('cors');
 const empresaRoutes = require('./src/routes/empresaRoutes');
 
-app.use(cors({ origin: 'http://177.66.190.16:9001' }));
+app.use(cors({ origin: 'http://177.66.190.16' }));
 app.use('/usuarios', usuarioRoutes);
 app.use('/servicos', servicoRoutes);
 app.use('/agendamentos', agendamentoRoutes);
