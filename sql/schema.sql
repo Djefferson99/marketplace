@@ -5,7 +5,6 @@ CREATE TABLE usuarios (
     email VARCHAR(150) UNIQUE NOT NULL,
     senha VARCHAR(255) NOT NULL,
     telefone VARCHAR(20) NOT NULL,
-    tipo_usuario VARCHAR(20) CHECK (tipo_usuario IN ('cliente', 'prestador')) NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -18,6 +17,7 @@ CREATE TABLE empresas (
     descricao TEXT,
     site VARCHAR(255),
     instagram VARCHAR(255),
+    linkedin VARCHAR(255),
     facebook VARCHAR(255),
     youtube VARCHAR(255),
     foto_perfil VARCHAR(255)
