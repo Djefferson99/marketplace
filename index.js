@@ -16,6 +16,7 @@ app.use('/servicos', servicoRoutes);
 app.use('/agendamentos', agendamentoRoutes);
 app.use('/', authRoutes);
 app.use('/empresas', empresaRoutes);
+app.use('/uploads', express.static('uploads'));
 
 app.get('/', (req, res) => {
   res.send('API Marketplace online ✅');
