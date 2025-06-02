@@ -7,7 +7,7 @@ const usuarioController = {
   create: async (req, res) => {
     try {
       const { nome, email, senha, telefone, tipo_usuario } = req.body;
-      if (!nome || !email || !senha || !telefone || !tipo_usuario) {
+      if (!nome || !email || !senha || !telefone) {
         return res.status(400).json({ mensagem: 'Todos os campos são obrigatórios' });
       }
       const hash = await bcrypt.hash(senha, SALT_ROUNDS);
@@ -49,8 +49,8 @@ const usuarioController = {
   update: async (req, res) => {
     try {
       const { id } = req.params;
-      const { nome, email, senha, telefone, tipo_usuario } = req.body;
-      if (!nome || !email || !telefone || !tipo_usuario) {
+      const { nome, email, senha, telefone } = req.body;
+      if (!nome || !email || !telefone) {
         return res.status(400)
           .json({ mensagem: 'Nome, email, telefone e tipo de usuário são obrigatórios' });
       }
