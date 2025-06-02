@@ -1,12 +1,4 @@
-// empresaModel.js + rota Express com upload e campo linkedin
-
-const express = require('express');
-const multer = require('multer');
-const db = require('../database/connection');
-
-const router = express.Router();
-
-// Model Empresa
+const db = require('../database/connection.js');
 const Empresa = {
   create: async (empresa) => {
     const { usuario_id, nome_empresa, apresentacao, descricao, site, instagram, linkedin, facebook, youtube, foto_perfil } = empresa;
@@ -46,48 +38,4 @@ const Empresa = {
   }
 };
 
-// Configuração do multer para upload da foto
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // pasta onde vai salvar as fotos
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = file.originalname.split('.').pop();
-    cb(null, `${file.fieldname}-${uniqueSuffix}.${ext}`);
-  }
-});
-
-const upload = multer({ storage });
-
-// Rota para criar empresa com upload da foto e campos incluindo linkedin
-router.post('/empresas', upload.single('foto_perfil'), async (req, res) => {
-  try {
-    const { usuario_id, nome_empresa, apresentacao, descricao, site, instagram, linkedin, facebook, youtube } = req.body;
-    const foto_perfil = req.file ? req.file.filename : null;
-
-    if (!usuario_id || !nome_empresa) {
-      return res.status(400).json({ mensagem: 'Campos obrigatórios ausentes' });
-    }
-
-    const novaEmpresa = await Empresa.create({
-      usuario_id,
-      nome_empresa,
-      apresentacao,
-      descricao,
-      site,
-      instagram,
-      linkedin,
-      facebook,
-      youtube,
-      foto_perfil
-    });
-
-    res.status(201).json(novaEmpresa);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ mensagem: 'Erro ao criar empresa' });
-  }
-});
-
-module.exports = router;
+module.exports = Empresa;
