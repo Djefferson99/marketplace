@@ -12,7 +12,7 @@ const usuarioController = {
       }
       const hash = await bcrypt.hash(senha, SALT_ROUNDS);
       const novoUsuario = await Usuario.create({
-        nome, email, senha: hash, telefone, tipo_usuario
+        nome, email, senha: hash, telefone
       });
       res.status(201).json(novoUsuario);
     } catch (err) {
@@ -54,7 +54,7 @@ const usuarioController = {
         return res.status(400)
           .json({ mensagem: 'Nome, email, telefone e tipo de usuário são obrigatórios' });
       }
-      const fields = { nome, email, telefone, tipo_usuario };
+      const fields = { nome, email, telefone };
       if (senha) {
         fields.senha = await bcrypt.hash(senha, SALT_ROUNDS);
       }
