@@ -52,7 +52,7 @@ const usuarioController = {
       const { nome, email, senha, telefone } = req.body;
       if (!nome || !email || !telefone) {
         return res.status(400)
-          .json({ mensagem: 'Nome, email, telefone e tipo de usuário são obrigatórios' });
+          .json({ mensagem: 'Nome, email, telefone são obrigatórios' });
       }
       const fields = { nome, email, telefone };
       if (senha) {
