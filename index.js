@@ -9,6 +9,7 @@ const agendamentoRoutes = require('./src/routes/agendamentoRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const cors = require('cors');
 const empresaRoutes = require('./src/routes/empresaRoutes');
+const path = require('path');
 
 app.use(cors({ origin: 'https://temp-indica.vercel.app' }));
 app.use('/usuarios', usuarioRoutes);
@@ -16,8 +17,7 @@ app.use('/servicos', servicoRoutes);
 app.use('/agendamentos', agendamentoRoutes);
 app.use('/', authRoutes);
 app.use('/empresas', empresaRoutes);
-app.use('/uploads', express.static('uploads'));
-
+app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
 
 app.get('/', (req, res) => {
   res.send('API Marketplace online ✅');
