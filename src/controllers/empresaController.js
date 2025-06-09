@@ -42,19 +42,21 @@ const empresaController = {
     }
   },
 
-  getById: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const empresa = await Empresa.findById(id);
-      if (empresa) {
-        res.status(200).json(empresa);
-      } else {
-        res.status(404).json({ message: 'Empresa não encontrada' });
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+getByUsuarioId: async (req, res) => {
+  try {
+    const { usuario_id } = req.params;
+    const empresa = await Empresa.findByUsuarioId(usuario_id);
+
+    if (empresa) {
+      res.status(200).json(empresa);
+    } else {
+      res.status(404).json({ message: 'Empresa não encontrada para este usuário' });
     }
-  },
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+,
 
   delete: async (req, res) => {
     try {
