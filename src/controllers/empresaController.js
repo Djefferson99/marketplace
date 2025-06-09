@@ -59,8 +59,7 @@ getByUsuarioId: async (req, res) => {
 getById: async (req, res) => {
   try {
     const { id } = req.params;
-    const empresa = await Empresa.findById(id); // Essa função deve existir no model
-
+    const empresa = await Empresa.findById(id);
     if (empresa) {
       res.status(200).json(empresa);
     } else {
