@@ -21,6 +21,11 @@ const Empresa = {
     const result = await db.query('SELECT * FROM empresas WHERE usuario_id = $1 LIMIT 1', [usuario_id]);
     return result.rows[0];
   },
+
+  findById: async (id) => {
+    const result = await db.query('SELECT * FROM empresas WHERE id = $1 LIMIT 1', [id]);
+    return result.rows[0];
+  },
   
   update: async (id, empresa) => {
     const { nome_empresa, apresentacao, descricao, site, instagram, linkedin, facebook, youtube, foto_perfil } = empresa;
