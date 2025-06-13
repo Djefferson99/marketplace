@@ -25,20 +25,24 @@ const Usuario = {
   },
 
   // UPDATE
-  update: async (id, fields) => {
-    const keys = Object.keys(fields);
-    const setters = keys.map((key, idx) => `${key} = $${idx + 1}`);
-    const values = keys.map((k) => fields[k]);
+update: async (id, fields) => {
+  const keys = Object.keys(fields).filter((key) => fields[key] !== undefined);
+  const setters = keys.map((key, idx) => `${key} = $${idx + 1}`);
+  const values = keys.map((k) => fields[k]);
 
-    const query = `
-      UPDATE usuarios
-      SET ${setters.join(', ')}
-      WHERE id = $${keys.length + 1}
-      RETURNING *`;
+  if (keys.length === 0) {
+    throw new Error("Nenhum campo válido para atualizar.");
+  }
 
-    const result = await db.query(query, [...values, id]);
-    return result.rows[0];
-  },
+  const query = `
+    UPDATE usuarios
+    SET ${setters.join(', ')}
+    WHERE id = $${keys.length + 1}
+    RETURNING *`;
+
+  const result = await db.query(query, [...values, id]);
+  return result.rows[0];
+},
 
   // DELETE
   delete: async (id) => {
