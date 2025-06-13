@@ -1,4 +1,4 @@
-const Usuario = require('../models/usuarioModel');
+const UsuarioModel = require('../models/usuarioModel');
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 10;
 
@@ -14,7 +14,7 @@ const usuarioController = {
 
       const hash = await bcrypt.hash(senha, SALT_ROUNDS);
 
-      const novoUsuario = await Usuario.create({
+      const novoUsuario = await UsuarioModel.create({
         nome,
         email,
         senha: hash,
@@ -31,7 +31,7 @@ const usuarioController = {
   // READ ALL
   findAll: async (req, res) => {
     try {
-      const usuarios = await Usuario.findAll();
+      const usuarios = await UsuarioModel.findAll();
       res.json(usuarios);
     } catch (err) {
       console.error('Erro no findAll:', err);
@@ -43,7 +43,7 @@ const usuarioController = {
   findById: async (req, res) => {
     try {
       const { id } = req.params;
-      const usuario = await Usuario.findById(id);
+      const usuario = await UsuarioModel.findById(id);
 
       if (!usuario) {
         return res.status(404).json({ mensagem: 'Usuário não encontrado' });
@@ -66,23 +66,26 @@ const usuarioController = {
         return res.status(400).json({ mensagem: 'Nome, email e telefone são obrigatórios' });
       }
 
-      const dadosAtualizar = {
+      let senhaCriptografada;
+      if (senha) {
+        senhaCriptografada = await bcrypt.hash(senha, SALT_ROUNDS);
+      }
+
+      const camposParaAtualizar = {
         nome,
         email,
-        telefone
+        telefone,
       };
 
-      if (senha) {
-        dadosAtualizar.senha = await bcrypt.hash(senha, SALT_ROUNDS);
+      if (senhaCriptografada) {
+        camposParaAtualizar.senha = senhaCriptografada;
       }
 
-      const [atualizado] = await Usuario.update(dadosAtualizar, { where: { id } });
+      const usuarioAtualizado = await UsuarioModel.update(id, camposParaAtualizar);
 
-      if (atualizado === 0) {
+      if (!usuarioAtualizado) {
         return res.status(404).json({ mensagem: 'Usuário não encontrado' });
       }
-
-      const usuarioAtualizado = await Usuario.findByPk(id);
 
       res.json(usuarioAtualizado);
     } catch (err) {
@@ -96,11 +99,7 @@ const usuarioController = {
     try {
       const { id } = req.params;
 
-      const deletado = await Usuario.destroy({ where: { id } });
-
-      if (deletado === 0) {
-        return res.status(404).json({ mensagem: 'Usuário não encontrado' });
-      }
+      await UsuarioModel.delete(id);
 
       res.json({ mensagem: 'Usuário deletado com sucesso' });
     } catch (err) {
