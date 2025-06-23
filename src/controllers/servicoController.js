@@ -1,4 +1,5 @@
 const Servico = require('../models/servicoModel');
+const ServicoService = require('../services/servicoService');
 
 const servicoController = {
     create: async (req, res) => {
@@ -48,6 +49,21 @@ const servicoController = {
             const { id } = req.params;
             await Servico.delete(id);
             res.status(204).send();
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+
+    getByEmpresaId: async (req, res) => {
+        try {
+            const { empresa_id } = req.params;
+            const servicos = await ServicoService.listarPorEmpresa(empresa_id);
+
+            if (servicos.length === 0) {
+                return res.status(404).json({ message: 'Nenhum serviço encontrado para esta empresa' });
+            }
+
+            res.status(200).json(servicos);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
