@@ -22,4 +22,11 @@ async function deletar(id) {
   return await ServicoModel.deletarServico(id);
 }
 
-module.exports = { listar, criar, atualizar, deletar };
+async function listarPorEmpresa(empresa_id) {
+  if (!empresa_id) {
+    throw new Error('ID da empresa é obrigatório');
+  }
+  return await ServicoModel.findByEmpresaId(empresa_id);
+}
+
+module.exports = { listar, criar, atualizar, listarPorEmpresa };

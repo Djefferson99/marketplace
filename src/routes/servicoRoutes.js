@@ -8,5 +8,6 @@ router.get('/', servicoController.getAll);
 router.get('/:id', servicoController.getById);
 router.put('/:id',autenticarToken, servicoController.update);
 router.delete('/:id',autenticarToken, servicoController.delete);
+router.get('/empresa/:empresa_id', servicoController.getByEmpresaId);
 
 module.exports = router;

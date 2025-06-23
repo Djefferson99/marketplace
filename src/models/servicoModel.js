@@ -31,6 +31,14 @@ const Servico = {
 
     delete: async (id) => {
         await db.query('DELETE FROM servicos WHERE id = $1', [id]);
+    },
+    
+    findByEmpresaId: async (empresa_id) => {
+    const result = await db.query(
+        'SELECT * FROM servicos WHERE empresa_id = $1',
+        [empresa_id]
+    );
+    return result.rows;
     }
 };
 
