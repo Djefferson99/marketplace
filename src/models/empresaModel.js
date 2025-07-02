@@ -1,15 +1,5 @@
 const db = require('../database/connection.js');
 
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-
-const PictureSchema = new Schema({
-  name: { type: String, required: true },
-  src: { type: String, required: true },
-});
-
-module.exports = mongoose.model("Picture", PictureSchema);
-
 const Empresa = {
   create: async (empresa) => {
     const { usuario_id, nome_empresa, apresentacao, descricao, site, instagram, linkedin, facebook, youtube, foto_perfil } = empresa;
