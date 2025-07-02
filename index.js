@@ -10,8 +10,14 @@ const authRoutes = require('./src/routes/authRoutes');
 const cors = require('cors');
 const empresaRoutes = require('./src/routes/empresaRoutes');
 const path = require('path');
+const cors = require('cors');
+const express = require('express');
 
-app.use(cors({ origin: 'https://temp-indica.vercel.app' }));
+app.use(cors({
+  origin: ['https://temp-indica.vercel.app'], // seu domínio do front
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+}));
 app.use('/usuarios', usuarioRoutes);
 app.use('/servicos', servicoRoutes);
 app.use('/agendamentos', agendamentoRoutes);
