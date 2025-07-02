@@ -2,14 +2,19 @@ const Empresa = require('../models/empresaModel');
 
 const empresaController = {
   create: async (req, res) => {
+    console.log('📁 req.file =', req.file);   // <— veja o que chega aqui
+    console.log('📄 req.body =', req.body);
+
     try {
       const empresaData = req.body;
       if (req.file) {
+        // salva o nome do arquivo no campo foto_perfil
         empresaData.foto_perfil = req.file.filename;
       }
       const empresa = await Empresa.create(empresaData);
       res.status(201).json(empresa);
     } catch (error) {
+      console.error('Erro no create empresa:', error);
       res.status(500).json({ error: error.message });
     }
   },
