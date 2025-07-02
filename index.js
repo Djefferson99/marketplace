@@ -17,6 +17,8 @@ app.use(cors({
   origin: ['https://temp-indica.vercel.app'], // seu domínio do front
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
 app.use('/usuarios', usuarioRoutes);
 app.use('/servicos', servicoRoutes);
