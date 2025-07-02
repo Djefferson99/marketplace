@@ -11,6 +11,8 @@ const servicoRoutes = require('./src/routes/servicoRoutes');
 const agendamentoRoutes = require('./src/routes/agendamentoRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const empresaRoutes = require('./src/routes/empresaRoutes');
+const path = require('path');
+
 
 app.use(cors({
   origin: ['https://temp-indica.vercel.app'], 
@@ -19,6 +21,7 @@ app.use(cors({
   credentials: true,
 }));
 
+app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
 app.use('/usuarios', usuarioRoutes);
 app.use('/servicos', servicoRoutes);
 app.use('/agendamentos', agendamentoRoutes);
