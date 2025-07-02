@@ -18,7 +18,6 @@ app.use(cors({
   credentials: true,
 }));
 
-// Apenas 1 vez
 app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
 
 app.use('/usuarios', usuarioRoutes);
