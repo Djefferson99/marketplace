@@ -2,7 +2,11 @@ const db = require('../database/connection.js');
 
 const Empresa = {
   create: async (empresa) => {
-    const { usuario_id, nome_empresa, apresentacao, descricao, site, instagram, linkedin, facebook, youtube, foto_perfil } = empresa;
+    const {
+      usuario_id, nome_empresa, apresentacao, descricao,
+      site, instagram, linkedin, facebook, youtube, foto_perfil
+    } = empresa;
+
     const result = await db.query(
       `INSERT INTO empresas 
         (usuario_id, nome_empresa, apresentacao, descricao, site, instagram, linkedin, facebook, youtube, foto_perfil) 
@@ -27,12 +31,18 @@ const Empresa = {
     const result = await db.query('SELECT * FROM empresas WHERE id = $1 LIMIT 1', [id]);
     return result.rows[0];
   },
-  
+
   update: async (id, empresa) => {
-    const { nome_empresa, apresentacao, descricao, site, instagram, linkedin, facebook, youtube, foto_perfil } = empresa;
+    const {
+      nome_empresa, apresentacao, descricao,
+      site, instagram, linkedin, facebook, youtube, foto_perfil
+    } = empresa;
+
     const result = await db.query(
       `UPDATE empresas SET 
-        nome_empresa = $1, apresentacao = $2, descricao = $3, site = $4, instagram = $5, linkedin = $6, facebook = $7, youtube = $8, foto_perfil = $9
+        nome_empresa = $1, apresentacao = $2, descricao = $3,
+        site = $4, instagram = $5, linkedin = $6,
+        facebook = $7, youtube = $8, foto_perfil = $9
        WHERE id = $10 RETURNING *`,
       [nome_empresa, apresentacao, descricao, site, instagram, linkedin, facebook, youtube, foto_perfil, id]
     );
