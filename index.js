@@ -24,7 +24,7 @@ app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
 app.use('/usuarios', usuarioRoutes);
 app.use('/servicos', servicoRoutes);
 app.use('/agendamentos', agendamentoRoutes);
-app.use('/auth', authRoutes);
+app.use('/', authRoutes);
 app.use('/calendar', calendarRoutes);
 app.use('/empresas', empresaRoutes);
 app.use('/', calendarRoutes);
