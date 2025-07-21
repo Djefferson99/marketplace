@@ -1,28 +1,21 @@
 const { google } = require('googleapis');
-const path = require('path');
-const fs = require('fs');
 const pool = require('../database/db'); // seu cliente pg já configurado
 
-const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 
-let credentials;
-let { client_secret, client_id, redirect_uris } = {};
+let client_id = process.env.GOOGLE_CLIENT_ID;
+let client_secret = process.env.GOOGLE_CLIENT_SECRET;
+let redirect_uris;
 
-// Carrega credenciais uma vez só
-function loadCredentials() {
-  if (!credentials) {
-    credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH));
-    const c = credentials.installed || credentials.web;
-    client_id = c.client_id;
-    client_secret = c.client_secret;
-    redirect_uris = c.redirect_uris;
-  }
+try {
+  // O valor da variável precisa ser um JSON stringificado, tipo: '["https://www.indca.com.br"]'
+  redirect_uris = JSON.parse(process.env.GOOGLE_REDIRECT_URIS || '["http://localhost"]');
+} catch (err) {
+  console.error('Erro ao fazer parse do REDIRECT_URIS:', err);
+  redirect_uris = ["http://localhost"];
 }
 
 async function getOAuthClientByEmail(email) {
-  loadCredentials();
-
   // Busca tokens no banco para o email do prestador
   const res = await pool.query(
     'SELECT google_access_token, google_refresh_token FROM prestadores WHERE email = $1',
