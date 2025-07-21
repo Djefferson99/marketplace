@@ -1,14 +1,11 @@
 const express = require('express');
 const { google } = require('googleapis');
-const path = require('path');
-const fs = require('fs');
-const pool = require('../database/db'); // seu pool do PG já configurado
+const pool = require('../database/db');
 const router = express.Router();
 
 // === Configurações Google OAuth2 ===
-const CREDENTIALS_PATH = path.join(__dirname, '../google/credentials.json');
-const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH));
-const { client_secret, client_id, redirect_uris } = credentials.web;
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+const { client_secret, client_id, redirect_uris } = credentials.web || credentials.installed;
 
 const oauth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
@@ -46,7 +43,7 @@ router.get('/auth/google', (req, res) => {
     access_type: 'offline',
     scope: ['https://www.googleapis.com/auth/calendar'],
     prompt: 'consent',
-    state: email, // para recuperar email no callback
+    state: email,
   });
 
   res.redirect(authUrl);
@@ -62,7 +59,6 @@ router.get('/oauth2callback', async (req, res) => {
   try {
     const { tokens } = await oauth2Client.getToken(code);
 
-    // Salvar ou atualizar tokens no banco
     await pool.query(
       `INSERT INTO prestadores (email, google_access_token, google_refresh_token)
        VALUES ($1, $2, $3)
@@ -79,7 +75,7 @@ router.get('/oauth2callback', async (req, res) => {
   }
 });
 
-// 3. Listar horários ocupados do prestador
+// 3. Listar horários ocupados
 router.get('/agenda/ocupados/:email', async (req, res) => {
   const email = req.params.email;
   try {
@@ -88,7 +84,7 @@ router.get('/agenda/ocupados/:email', async (req, res) => {
 
     const now = new Date();
     const end = new Date();
-    end.setDate(end.getDate() + 7); // próximos 7 dias
+    end.setDate(end.getDate() + 7);
 
     const result = await calendar.freebusy.query({
       requestBody: {
@@ -107,7 +103,7 @@ router.get('/agenda/ocupados/:email', async (req, res) => {
   }
 });
 
-// 4. Criar evento/agendamento no Google Calendar
+// 4. Criar evento
 router.post('/agenda/agendar', async (req, res) => {
   const { prestadorEmail, clienteNome, horarioInicio, horarioFim, descricao } = req.body;
 
