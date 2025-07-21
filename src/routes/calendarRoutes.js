@@ -36,8 +36,12 @@ router.get('/agenda/ocupados/:email', async (req, res) => {
 router.post('/agenda/agendar', async (req, res) => {
   const { prestadorEmail, clienteNome, horarioInicio, horarioFim, descricao } = req.body;
 
+  console.log('Recebido agendamento:', { prestadorEmail, clienteNome, horarioInicio, horarioFim, descricao });
+
   try {
     const auth = await getOAuthClientByEmail(prestadorEmail);
+    console.log('OAuth Client obtido com sucesso para:', prestadorEmail);
+
     const calendar = google.calendar({ version: 'v3', auth });
 
     const evento = {
@@ -53,16 +57,21 @@ router.post('/agenda/agendar', async (req, res) => {
       },
     };
 
+    console.log('Evento a ser criado:', evento);
+
     const result = await calendar.events.insert({
       calendarId: 'primary',
       resource: evento,
     });
 
+    console.log('Evento criado com sucesso:', result.data);
+
     res.json({ sucesso: true, eventoCriado: result.data });
   } catch (err) {
-    console.error(err);
+    console.error('Erro ao criar evento na agenda:', err);
     res.status(500).send('Erro ao criar evento na agenda');
   }
 });
+
 
 module.exports = router;
