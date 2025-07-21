@@ -1,6 +1,6 @@
 const express = require('express');
 const oAuth2Client = require('../google/googleAuth');
-const pool = require('../db');
+const pool = require('../database/db');
 const { google } = require('googleapis');
 
 const router = express.Router();
