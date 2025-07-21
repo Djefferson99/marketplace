@@ -10,9 +10,10 @@ const servicoRoutes = require('./src/routes/servicoRoutes');
 const agendamentoRoutes = require('./src/routes/agendamentoRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const empresaRoutes = require('./src/routes/empresaRoutes');
+const calendarRoutes = require('./src/routes/calendarRoutes');
 
 app.use(cors({
-  origin: ['https://temp-indica.vercel.app'],
+  origin: ['https://www.indca.com.br'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -25,7 +26,7 @@ app.use('/servicos', servicoRoutes);
 app.use('/agendamentos', agendamentoRoutes);
 app.use('/', authRoutes);
 app.use('/empresas', empresaRoutes);
-
+app.use('/', calendarRoutes);
 app.get('/', (req, res) => {
   res.send('API Marketplace online ✅');
 });
