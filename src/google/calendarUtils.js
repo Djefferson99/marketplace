@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 const path = require('path');
 const fs = require('fs');
-const pool = require('../db'); // seu cliente pg já configurado
+const pool = require('../database/db'); // seu cliente pg já configurado
 
 const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
