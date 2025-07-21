@@ -1,21 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const { google } = require('googleapis');
-const path = require('path');
-const fs = require('fs');
 const pool = require('../database/db');
 const authController = require('../controllers/authController');
 
-// Rota de login (caso queira manter aqui)
+// Rota de login
 router.post('/login', authController.login);
 
-// Caminho das credenciais
-const CREDENTIALS_PATH = path.join(__dirname, '../google/credentials.json');
-const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH));
-const { client_secret, client_id, redirect_uris } = credentials.web;
+// Carrega as credenciais do ambiente (Railway)
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+const { client_secret, client_id, redirect_uris } = credentials.web || credentials.installed;
 
 // Instancia o cliente OAuth
-const oauth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+const oauth2Client = new google.auth.OAuth2(
+  client_id,
+  client_secret,
+  redirect_uris[0]
+);
 
 // 1. Gera URL para login do Google
 router.get('/auth/google', (req, res) => {
