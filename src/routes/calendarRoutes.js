@@ -35,7 +35,7 @@ async function getOAuthClientByEmail(email) {
 // === Rotas ===
 
 // 1. Rota para iniciar autenticação Google
-router.get('/auth/google', (req, res) => {
+router.get('/google', (req, res) => {
   const email = req.query.email;
   if (!email) return res.status(400).send('Email é obrigatório!');
 

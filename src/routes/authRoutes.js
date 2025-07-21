@@ -19,7 +19,7 @@ const oauth2Client = new google.auth.OAuth2(
 );
 
 // 1. Gera URL para login do Google
-router.get('/auth/google', (req, res) => {
+router.get('/google', (req, res) => {
   const email = req.query.email;
 
   if (!email) {
