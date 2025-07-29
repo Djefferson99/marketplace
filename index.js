@@ -7,10 +7,9 @@ app.use(express.json());
 
 const usuarioRoutes = require('./src/routes/usuarioRoutes');
 const servicoRoutes = require('./src/routes/servicoRoutes');
-const agendamentoRoutes = require('./src/routes/agendamentoRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const empresaRoutes = require('./src/routes/empresaRoutes');
-const calendarRoutes = require('./src/routes/calendarRoutes');
+const uploadRoute = require('./routes/uploadRoute');
 
 app.use(cors({
   origin: ['https://www.indca.com.br'],
@@ -19,15 +18,12 @@ app.use(cors({
   credentials: true,
 }));
 
-app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
-
+app.use("/api", require("./routes/s3"));
+app.use('/api', uploadRoute);
 app.use('/usuarios', usuarioRoutes);
 app.use('/servicos', servicoRoutes);
-app.use('/agendamentos', agendamentoRoutes);
 app.use('/', authRoutes);
-app.use('/calendar', calendarRoutes);
 app.use('/empresas', empresaRoutes);
-app.use('/', calendarRoutes);
 app.get('/', (req, res) => {
   res.send('API Marketplace online ✅');
 });
