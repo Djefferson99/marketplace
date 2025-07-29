@@ -63,3 +63,20 @@ CREATE TABLE agendamentos (
 
 CREATE UNIQUE INDEX idx_agendamento_unico
 ON agendamentos (empresa_id, data, hora);
+
+-- 1) Adiciona colunas novas para S3
+ALTER TABLE empresas
+  ADD COLUMN IF NOT EXISTS foto_url TEXT,
+  ADD COLUMN IF NOT EXISTS foto_key TEXT;
+
+-- 2) Se você já gravou algo em foto_perfil (URL antiga), copia para foto_url
+UPDATE empresas
+SET foto_url = foto_perfil
+WHERE foto_url IS NULL AND foto_perfil IS NOT NULL;
+
+-- (Opcional) Se cada usuário tem apenas uma empresa, garanta isso
+-- CREATE UNIQUE INDEX IF NOT EXISTS empresas_usuario_unq ON empresas (usuario_id);
+
+-- (Opcional) campos de auditoria caso ainda não tenha
+-- ALTER TABLE empresas ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT now();
+-- ALTER TABLE empresas ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT now();
