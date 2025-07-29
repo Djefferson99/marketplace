@@ -1,11 +1,3 @@
-DO $$ DECLARE
-    r RECORD;
-BEGIN
-    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
-        EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
-    END LOOP;
-END $$;
-
 -- Tabela de usuários
 CREATE TABLE usuarios (
     id SERIAL PRIMARY KEY,
@@ -42,41 +34,19 @@ CREATE TABLE servicos (
 );
 
 -- Tabela de agendamentos
-CREATE TABLE horarios_de_agendamentos (
-    id SERIAL PRIMARY KEY,
-    empresa_id INT REFERENCES empresas(id) ON DELETE CASCADE,
-    dia_semana VARCHAR(10) NOT NULL, -- Ex: 'segunda', 'terça'
-    hora TIME NOT NULL,              -- Ex: '07:00', '07:30'
-    disponivel BOOLEAN DEFAULT TRUE -- Pode ser útil para desabilitar sem deletar
-);
-
 CREATE TABLE agendamentos (
     id SERIAL PRIMARY KEY,
-    empresa_id INT REFERENCES empresas(id) ON DELETE CASCADE,
+    cliente_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    prestador_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
     servico_id INT REFERENCES servicos(id) ON DELETE CASCADE,
-    nome_cliente VARCHAR(100) NOT NULL,
-    telefone_cliente VARCHAR(20) NOT NULL,
-    data DATE NOT NULL,             -- Dia do agendamento
-    hora TIME NOT NULL,             -- Hora do agendamento
+    data_agendada TIMESTAMP NOT NULL,
+    status VARCHAR(20) DEFAULT 'pendente' CHECK (status IN ('pendente', 'confirmado', 'cancelado')),
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE UNIQUE INDEX idx_agendamento_unico
-ON agendamentos (empresa_id, data, hora);
-
--- 1) Adiciona colunas novas para S3
-ALTER TABLE empresas
-  ADD COLUMN IF NOT EXISTS foto_url TEXT,
-  ADD COLUMN IF NOT EXISTS foto_key TEXT;
-
--- 2) Se você já gravou algo em foto_perfil (URL antiga), copia para foto_url
-UPDATE empresas
-SET foto_url = foto_perfil
-WHERE foto_url IS NULL AND foto_perfil IS NOT NULL;
-
--- (Opcional) Se cada usuário tem apenas uma empresa, garanta isso
--- CREATE UNIQUE INDEX IF NOT EXISTS empresas_usuario_unq ON empresas (usuario_id);
-
--- (Opcional) campos de auditoria caso ainda não tenha
--- ALTER TABLE empresas ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT now();
--- ALTER TABLE empresas ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT now();
+CREATE TABLE prestadores (
+  id SERIAL PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  google_access_token TEXT,
+  google_refresh_token TEXT
+);

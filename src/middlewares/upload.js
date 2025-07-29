@@ -1,26 +1,25 @@
+// src/middlewares/upload.js
 const multer = require('multer');
-const AWS = require('aws-sdk');
-const multerS3 = require('multer-s3');
+const path = require('path');
+const fs = require('fs');
 
-if (!process.env.AWS_BUCKET_NAME) {
-  throw new Error('AWS_BUCKET_NAME não definido nas variáveis de ambiente');
-}
-if (!process.env.AWS_REGION) {
-  throw new Error('AWS_REGION não definido nas variáveis de ambiente');
+const uploadsDir = path.resolve(__dirname, '..', 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
 }
 
-const s3 = new AWS.S3({
-  region: process.env.AWS_REGION,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+  },
 });
-
-const storage = multerS3({
-  s3,
-  bucket: process.env.AWS_BUCKET_NAME,
-  acl: 'public-read', // ou remova se bucket privado
-  metadata: (req, file, cb) => cb(null, { fieldName: file.fieldname }),
-  key: (req, file, cb) => cb(null, `uploads/${Date.now()}_${file.originalname}`),
-});
-
-module.exports = multer({ storage });
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image/')) cb(null, true);
+  else cb(new Error('Somente imagens são permitidas!'), false);
+};
+module.exports = multer({ storage, fileFilter });
