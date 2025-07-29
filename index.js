@@ -9,12 +9,10 @@ app.use(cors({
   origin: 'https://www.indca.com.br',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true, // só se você usa cookies/autenticação via sessão
+  credentials: true, 
 }));
 
-// (opcional) responder preflight manualmente, embora o cors já faça
 app.options('*', cors());
-
 
 const usuarioRoutes = require('./src/routes/usuarioRoutes');
 const servicoRoutes = require('./src/routes/servicoRoutes');
