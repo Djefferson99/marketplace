@@ -12,7 +12,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const empresaRoutes = require('./src/routes/empresaRoutes');
 
 app.use(cors({
-  origin: ['https://temp-indica.vercel.app'],
+  origin: ['www.indca.com.br'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
