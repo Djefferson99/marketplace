@@ -43,10 +43,3 @@ CREATE TABLE agendamentos (
     status VARCHAR(20) DEFAULT 'pendente' CHECK (status IN ('pendente', 'confirmado', 'cancelado')),
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE TABLE prestadores (
-  id SERIAL PRIMARY KEY,
-  email TEXT UNIQUE NOT NULL,
-  google_access_token TEXT,
-  google_refresh_token TEXT
-);
