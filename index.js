@@ -12,7 +12,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const empresaRoutes = require('./src/routes/empresaRoutes');
 
 app.use(cors({
-  origin: ['https://www.indca.com.br', 'http://127.0.0.1:5501', 'http://localhost:5500'],
+  origin: ['https://www.indca.com.br'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
