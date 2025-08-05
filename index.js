@@ -10,7 +10,7 @@ const servicoRoutes = require('./src/routes/servicoRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const empresaRoutes = require('./src/routes/empresaRoutes');
 const agendamentoRoutes = require('./src/routes/agendamentoRoutes');
-const horarioRoutes = require('./src/routes/horarioRoutes');
+const horarioRoutes = require('./src/routes/horariosRoutes');
 app.use(cors({
   origin: ['https://www.indca.com.br', 'http://127.0.0.1:5501'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
