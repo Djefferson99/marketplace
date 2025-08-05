@@ -7,10 +7,10 @@ const empresaController = {
 
     try {
       const empresaData = req.body;
-      if (req.file) {
-        // salva o nome do arquivo no campo foto_perfil
-        empresaData.foto_perfil = req.file.filename;
-      }
+      // if (req.file) {
+      //   // salva o nome do arquivo no campo foto_perfil
+      //   empresaData.foto_perfil = req.file.filename;
+      // }
       const empresa = await Empresa.create(empresaData);
       res.status(201).json(empresa);
     } catch (error) {
@@ -23,9 +23,9 @@ const empresaController = {
     try {
       const { id } = req.params;
       const empresaData = req.body;
-      if (req.file) {
-        empresaData.foto_perfil = req.file.filename;
-      }
+      // if (req.file) {
+      //   empresaData.foto_perfil = req.file.filename;
+      // }
       const empresa = await Empresa.update(id, empresaData);
       res.status(200).json(empresa);
     } catch (error) {
