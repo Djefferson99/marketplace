@@ -1,28 +1,23 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 
 const app = express();
 app.use(express.json());
 
 const usuarioRoutes = require('./src/routes/usuarioRoutes');
 const servicoRoutes = require('./src/routes/servicoRoutes');
-const agendamentoRoutes = require('./src/routes/agendamentoRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const empresaRoutes = require('./src/routes/empresaRoutes');
 
 app.use(cors({
-  origin: ['https://www.indca.com.br'],
+  origin: ['https://www.indca.com.br', 'http://127.0.0.1:5500', 'http://localhost:5500'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
 
-app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
-
 app.use('/usuarios', usuarioRoutes);
 app.use('/servicos', servicoRoutes);
-app.use('/agendamentos', agendamentoRoutes);
 app.use('/', authRoutes);
 app.use('/empresas', empresaRoutes);
 
