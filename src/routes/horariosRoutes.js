@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const horarioController = require('../controllers/horarioController');
+const horarioController = require('../controllers/horariosController');
 
 router.post('/', horarioController.create);
 router.get('/empresa/:empresa_id', horarioController.getByEmpresaId);
