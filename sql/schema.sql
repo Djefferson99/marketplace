@@ -53,10 +53,10 @@ CREATE TABLE horarios_de_agendamentos (
 CREATE TABLE agendamentos (
     id SERIAL PRIMARY KEY,
     empresa_id INT REFERENCES empresas(id) ON DELETE CASCADE,
-    servico_id INT REFERENCES servicos(id) ON DELETE CASCADE,
+    servico_titulo VARCHAR(100) NOT NULL,
     nome_cliente VARCHAR(100) NOT NULL,
     telefone_cliente VARCHAR(20) NOT NULL,
-    data DATE NOT NULL,             -- Dia do agendamento
+    dia_semana VARCHAR(10) NOT NULL, -- Ex: 'segunda', 'terça'             -- Dia do agendamento
     hora TIME NOT NULL,             -- Hora do agendamento
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

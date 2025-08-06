@@ -18,18 +18,18 @@ const agendamentoController = {
       }
 
       // Enviar email de confirmação para o cliente
-      await resend.emails.send({
-        from: 'Agendamento <sistema@indca.com.br>',
-        to: req.body.email_cliente,
-        subject: 'Confirmação de Agendamento',
-        html: `<p>Olá ${req.body.nome_cliente}, seu agendamento para o serviço <strong>${req.body.nome_servico}</strong> foi confirmado no dia <strong>${req.body.data}</strong> às <strong>${req.body.hora}</strong>.</p>`,
-      });
+    await resend.emails.send({
+      from: 'Agendamento <sistema@indca.com.br>',
+      to: req.body.email_cliente,
+      subject: 'Confirmação de Agendamento',
+      html: `<p>Olá ${req.body.nome_cliente}, seu agendamento para o serviço <strong>${req.body.servico_titulo}</strong> foi confirmado no dia <strong>${req.body.data}</strong> às <strong>${req.body.hora}</strong>.</p>`,
+    });
 
-      // Enviar WhatsApp para a empresa avisando do novo agendamento
-      await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
-        phone: req.body.telefone_empresa, // formato: 5511999999999
-        message: `📢 Novo agendamento!\nCliente: ${req.body.nome_cliente}\nServiço: ${req.body.nome_servico}\nData: ${req.body.data} às ${req.body.hora}`
-      });
+    // Enviar WhatsApp para a empresa avisando do novo agendamento
+    await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
+      phone: req.body.telefone_empresa, // formato: 5511999999999
+      message: `📢 Novo agendamento!\nCliente: ${req.body.nome_cliente}\nServiço: ${req.body.servico_titulo}\nData: ${req.body.data} às ${req.body.hora}`
+    });
 
       res.status(201).json(agendamento);
     } catch (error) {

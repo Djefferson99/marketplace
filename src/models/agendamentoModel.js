@@ -3,16 +3,16 @@ const db = require('../database/connection.js');
 const Agendamento = {
   create: async (agendamento) => {
     const {
-      empresa_id, servico_id, nome_cliente,
+      empresa_id, servico_titulo, nome_cliente,
       telefone_cliente, dia_semana, hora
     } = agendamento;
 
     const result = await db.query(
       `INSERT INTO agendamentos
-        (empresa_id, servico_id, nome_cliente, telefone_cliente, dia_semana, hora)
+        (empresa_id, servico_titulo, nome_cliente, telefone_cliente, dia_semana, hora)
        VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-      [empresa_id, servico_id, nome_cliente, telefone_cliente, dia_semana, hora]
+      [empresa_id, servico_titulo, nome_cliente, telefone_cliente, dia_semana, hora]
     );
 
     return result.rows[0];
