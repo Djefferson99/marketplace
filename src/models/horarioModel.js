@@ -21,10 +21,10 @@ const Horario = {
     return result.rows;
   },
 
-  findById: async (id) => {
-    const result = await pool.query('SELECT * FROM horarios WHERE id = $1', [id]);
+    findById: async (id) => {
+    const result = await db.query('SELECT * FROM horarios_de_agendamentos WHERE id = $1', [id]);
     return result.rows[0];
-  },
+    },
 
   update: async (id, horario) => {
     const { dia_semana, hora, disponivel } = horario;
