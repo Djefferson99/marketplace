@@ -3,8 +3,7 @@ const Agendamento = require('../models/agendamentoModel');
 const Horario = require('../models/horarioModel');
 const { Resend } = require('resend');
 const axios = require('axios');
-const e = require('cors');
-import { Resend } from 'resend';
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const agendamentoController = {
@@ -37,9 +36,8 @@ const agendamentoController = {
     if (horario_id) {
       await Horario.updateStatus(horario_id, false);
     }
-console.log(empresa.email)
+console.log(resend)
     // Enviar e-mail ao prestador
-
     await resend.emails.send({
       from: 'Agendamento <djeff.walla99@gmail.com>',
       to: [empresa.email],
@@ -55,7 +53,7 @@ console.log(empresa.email)
         </ul>
       `
     });
-    
+
     // // WhatsApp para cliente
     // try{
     //       await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
