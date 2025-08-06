@@ -19,6 +19,17 @@ const horarioController = {
     }
   },
 
+  getById: async (req, res) => {
+  try {
+    const horario = await Horario.findById(req.params.id);
+    if (!horario) {
+      return res.status(404).json({ message: 'Horário não encontrado' });
+    }
+    res.json(horario);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+},
   update: async (req, res) => {
     try {
       const horarioAtualizado = await Horario.update(req.params.id, req.body);
