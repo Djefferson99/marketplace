@@ -8,75 +8,70 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const agendamentoController = {
   create: async (req, res) => {
-    try {
-      // 1. Buscar o título do serviço pelo id enviado
-      const servicoResult = await db.query(
-        'SELECT titulo FROM servicos WHERE id = $1',
-        [req.body.servico_id]
-      );
-      if (servicoResult.rows.length === 0) {
-        return res.status(400).json({ error: 'Serviço inválido' });
-      }
-      const servico_titulo = servicoResult.rows[0].titulo;
+  const { servico_titulo, nome_cliente, telefone_cliente, empresa_id, dia_semana, hora, horario_id } = req.body;
 
-      // 2. Buscar dados da empresa + usuário (email e telefone)
-      const empresaResult = await db.query(`
-        SELECT e.nome_empresa, u.email, u.telefone
-        FROM empresas e
-        JOIN usuarios u ON e.usuario_id = u.id
-        WHERE e.id = $1
-      `, [req.body.empresa_id]);
-      if (empresaResult.rows.length === 0) {
-        return res.status(404).json({ error: 'Empresa não encontrada' });
-      }
-      const empresa = empresaResult.rows[0];
+  if (!servico_titulo || !nome_cliente || !telefone_cliente || !empresa_id || !dia_semana || !hora) {
+    return res.status(400).json({ error: 'Todos os campos obrigatórios devem ser preenchidos.' });
+  }
 
-      // 3. Preencher o título no corpo da requisição para criar agendamento
-      req.body.servico_titulo = servico_titulo;
+  try {
+    // Buscar dados da empresa + usuário (email e telefone)
+    const empresaResult = await db.query(`
+      SELECT e.nome_empresa, u.email, u.telefone
+      FROM empresas e
+      JOIN usuarios u ON e.usuario_id = u.id
+      WHERE e.id = $1
+    `, [empresa_id]);
 
-      // 4. Criar agendamento
-      const agendamento = await Agendamento.create(req.body);
-
-      // 5. Marcar horário como indisponível
-      if (req.body.horario_id) {
-        await Horario.updateStatus(req.body.horario_id, false);
-      }
-
-      // 6. Enviar email para o prestador (empresa)
-      await resend.emails.send({
-        from: 'Agendamento <sistema@indca.com.br>',
-        to: empresa.email,
-        subject: 'Novo Agendamento Recebido',
-        html: `
-          <p>Olá ${empresa.nome_empresa},</p>
-          <p>Você recebeu um novo agendamento:</p>
-          <ul>
-            <li>Cliente: ${req.body.nome_cliente}</li>
-            <li>Serviço: ${servico_titulo}</li>
-            <li>Data: ${req.body.dia_semana}</li>
-            <li>Hora: ${req.body.hora}</li>
-          </ul>
-        `
-      });
-
-      // 7. WhatsApp para cliente confirmando agendamento
-      await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
-        phone: req.body.telefone_cliente,
-        message: `Olá ${req.body.nome_cliente}, seu agendamento para o serviço ${servico_titulo} foi confirmado para ${req.body.dia_semana} às ${req.body.hora}.`
-      });
-
-      // 8. WhatsApp para prestador avisando novo agendamento
-      await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
-        phone: empresa.telefone,
-        message: `📢 Novo agendamento!\nCliente: ${req.body.nome_cliente}\nServiço: ${servico_titulo}\nData: ${req.body.dia_semana} às ${req.body.hora}`
-      });
-
-      res.status(201).json(agendamento);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Erro ao criar agendamento' });
+    if (empresaResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Empresa não encontrada' });
     }
-  },
+
+    const empresa = empresaResult.rows[0];
+
+    // Criar agendamento
+    const agendamento = await Agendamento.create(req.body);
+
+    // Marcar horário como indisponível
+    if (horario_id) {
+      await Horario.updateStatus(horario_id, false);
+    }
+
+    // Enviar e-mail ao prestador
+    await resend.emails.send({
+      from: 'Agendamento <sistema@indca.com.br>',
+      to: empresa.email,
+      subject: 'Novo Agendamento Recebido',
+      html: `
+        <p>Olá ${empresa.nome_empresa},</p>
+        <p>Você recebeu um novo agendamento:</p>
+        <ul>
+          <li>Cliente: ${nome_cliente}</li>
+          <li>Serviço: ${servico_titulo}</li>
+          <li>Data: ${dia_semana}</li>
+          <li>Hora: ${hora}</li>
+        </ul>
+      `
+    });
+
+    // WhatsApp para cliente
+    await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
+      phone: telefone_cliente,
+      message: `Olá ${nome_cliente}, seu agendamento para o serviço ${servico_titulo} foi confirmado.`
+    });
+
+    // WhatsApp para prestador
+    await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
+      phone: empresa.telefone,
+      message: `📢 Novo agendamento!\nCliente: ${nome_cliente}\nServiço: ${servico_titulo}\nData: ${dia_semana} às ${hora}`
+    });
+
+    res.status(201).json(agendamento);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao criar agendamento' });
+  }
+},
 
   getByEmpresa: async (req, res) => {
     try {
