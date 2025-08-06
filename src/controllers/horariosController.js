@@ -18,7 +18,6 @@ const horarioController = {
       res.status(500).json({ error: error.message });
     }
   },
-
   getById: async (req, res) => {
   try {
     const horario = await Horario.findById(req.params.id);
