@@ -1,5 +1,4 @@
-require('dotenv').config();
-const db = require('../database/connection.js'); // IMPORTAÇÃO DO DB FALTANDO
+const db = require('../database/connection.js');
 const Agendamento = require('../models/agendamentoModel');
 const Horario = require('../models/horarioModel');
 const { Resend } = require('resend');
@@ -10,30 +9,40 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const agendamentoController = {
   create: async (req, res) => {
     try {
-      // 1. Buscar dados da empresa + usuário (email e telefone)
-      const empresaId = req.body.empresa_id;
+      // 1. Buscar o título do serviço pelo id enviado
+      const servicoResult = await db.query(
+        'SELECT titulo FROM servicos WHERE id = $1',
+        [req.body.servico_id]
+      );
+      if (servicoResult.rows.length === 0) {
+        return res.status(400).json({ error: 'Serviço inválido' });
+      }
+      const servico_titulo = servicoResult.rows[0].titulo;
+
+      // 2. Buscar dados da empresa + usuário (email e telefone)
       const empresaResult = await db.query(`
         SELECT e.nome_empresa, u.email, u.telefone
         FROM empresas e
         JOIN usuarios u ON e.usuario_id = u.id
         WHERE e.id = $1
-      `, [empresaId]);
-
+      `, [req.body.empresa_id]);
       if (empresaResult.rows.length === 0) {
         return res.status(404).json({ error: 'Empresa não encontrada' });
       }
-
       const empresa = empresaResult.rows[0];
 
-      // 2. Criar agendamento
+      // 3. Preencher o título no corpo da requisição para criar agendamento
+      req.body.servico_titulo = servico_titulo;
+
+      // 4. Criar agendamento
       const agendamento = await Agendamento.create(req.body);
 
-      // 3. Marcar horário como indisponível
+      // 5. Marcar horário como indisponível
       if (req.body.horario_id) {
         await Horario.updateStatus(req.body.horario_id, false);
       }
 
-      // 4. Enviar email para o prestador (empresa) avisando do novo agendamento
+      // 6. Enviar email para o prestador (empresa)
       await resend.emails.send({
         from: 'Agendamento <sistema@indca.com.br>',
         to: empresa.email,
@@ -43,23 +52,23 @@ const agendamentoController = {
           <p>Você recebeu um novo agendamento:</p>
           <ul>
             <li>Cliente: ${req.body.nome_cliente}</li>
-            <li>Serviço: ${req.body.servico_titulo || req.body.nome_servico}</li>
+            <li>Serviço: ${servico_titulo}</li>
             <li>Data: ${req.body.dia_semana}</li>
             <li>Hora: ${req.body.hora}</li>
           </ul>
         `
       });
 
-      // 5. Enviar WhatsApp para o cliente confirmando agendamento
+      // 7. WhatsApp para cliente confirmando agendamento
       await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
-        phone: req.body.telefone_cliente, // telefone do cliente no formato 55xx...
-        message: `Olá ${req.body.nome_cliente}, seu agendamento para o serviço ${req.body.servico_titulo || req.body.nome_servico} foi confirmado para ${req.body.dia_semana} às ${req.body.hora}.`
+        phone: req.body.telefone_cliente,
+        message: `Olá ${req.body.nome_cliente}, seu agendamento para o serviço ${servico_titulo} foi confirmado para ${req.body.dia_semana} às ${req.body.hora}.`
       });
 
-      // 6. Enviar WhatsApp para o prestador avisando novo agendamento
+      // 8. WhatsApp para prestador avisando novo agendamento
       await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
-        phone: empresa.telefone, // telefone do prestador no formato 55xx...
-        message: `📢 Novo agendamento!\nCliente: ${req.body.nome_cliente}\nServiço: ${req.body.servico_titulo || req.body.nome_servico}\nData: ${req.body.dia_semana} às ${req.body.hora}`
+        phone: empresa.telefone,
+        message: `📢 Novo agendamento!\nCliente: ${req.body.nome_cliente}\nServiço: ${servico_titulo}\nData: ${req.body.dia_semana} às ${req.body.hora}`
       });
 
       res.status(201).json(agendamento);
