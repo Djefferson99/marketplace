@@ -39,7 +39,7 @@ const agendamentoController = {
 
     // Enviar e-mail ao prestador
     await resend.emails.send({
-      from: 'Agendamento <sistema@indca.com.br>',
+      from: 'Agendamento <djeff.walla99@gmail.com>',
       to: empresa.email,
       subject: 'Novo Agendamento Recebido',
       html: `
