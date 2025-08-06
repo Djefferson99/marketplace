@@ -54,26 +54,26 @@ const agendamentoController = {
       `
     });
 
-    // WhatsApp para cliente
-    try{
-          await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
-      phone: telefone_cliente,
-      message: `Olá ${nome_cliente}, seu agendamento para o serviço ${servico_titulo} foi confirmado.`
-    });
+    // // WhatsApp para cliente
+    // try{
+    //       await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
+    //   phone: telefone_cliente,
+    //   message: `Olá ${nome_cliente}, seu agendamento para o serviço ${servico_titulo} foi confirmado.`
+    // });
 
-    // WhatsApp para prestador
-    await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
-      phone: empresa.telefone,
-      message: `📢 Novo agendamento!\nCliente: ${nome_cliente}\nServiço: ${servico_titulo}\nData: ${dia_semana} às ${hora}`
-    });
-    }catch (error) {
-      if (error.response) {
-        console.error('Erro resposta API:', error.response.data);
-      } else {
-        console.error('Erro:', error.message);
-      }
-      res.status(500).json({ error: 'Erro ao criar agendamento' });
-    }
+    // // WhatsApp para prestador
+    // await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
+    //   phone: empresa.telefone,
+    //   message: `📢 Novo agendamento!\nCliente: ${nome_cliente}\nServiço: ${servico_titulo}\nData: ${dia_semana} às ${hora}`
+    // });
+    // }catch (error) {
+    //   if (error.response) {
+    //     console.error('Erro resposta API:', error.response.data);
+    //   } else {
+    //     console.error('Erro:', error.message);
+    //   }
+    //   res.status(500).json({ error: 'Erro ao criar agendamento' });
+    // }
 
 
 
