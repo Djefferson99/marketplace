@@ -3,6 +3,7 @@ const Agendamento = require('../models/agendamentoModel');
 const Horario = require('../models/horarioModel');
 const { Resend } = require('resend');
 const axios = require('axios');
+const e = require('cors');
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -36,11 +37,11 @@ const agendamentoController = {
     if (horario_id) {
       await Horario.updateStatus(horario_id, false);
     }
-
+console.log(empresa.email)
     // Enviar e-mail ao prestador
     await resend.emails.send({
       from: 'Agendamento <djeff.walla99@gmail.com>',
-      to: empresa.email,
+      to: [empresa.email],
       subject: 'Novo Agendamento Recebido',
       html: `
         <p>Olá ${empresa.nome_empresa},</p>
