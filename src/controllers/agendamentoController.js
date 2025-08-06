@@ -55,7 +55,8 @@ const agendamentoController = {
     });
 
     // WhatsApp para cliente
-    await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
+    try{
+          await axios.post(`https://api.z-api.io/instances/${process.env.ZAPI_INSTANCE_ID}/token/${process.env.ZAPI_TOKEN}/send-messages`, {
       phone: telefone_cliente,
       message: `Olá ${nome_cliente}, seu agendamento para o serviço ${servico_titulo} foi confirmado.`
     });
@@ -65,6 +66,16 @@ const agendamentoController = {
       phone: empresa.telefone,
       message: `📢 Novo agendamento!\nCliente: ${nome_cliente}\nServiço: ${servico_titulo}\nData: ${dia_semana} às ${hora}`
     });
+    }catch (error) {
+      if (error.response) {
+        console.error('Erro resposta API:', error.response.data);
+      } else {
+        console.error('Erro:', error.message);
+      }
+      res.status(500).json({ error: 'Erro ao criar agendamento' });
+    }
+
+
 
     res.status(201).json(agendamento);
   } catch (error) {
