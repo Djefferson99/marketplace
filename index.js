@@ -24,7 +24,7 @@ app.use(cors({
 // Rotas
 app.use('/usuarios', usuarioRoutes);
 app.use('/servicos', servicoRoutes);
-app.use('/auth', authRoutes);
+app.use('/', authRoutes);
 app.use('/empresas', empresaRoutes);
 app.use('/agendamentos', agendamentoRoutes);
 app.use('/horarios', horarioRoutes);
