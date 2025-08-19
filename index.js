@@ -13,13 +13,13 @@ const agendamentoRoutes = require('./src/routes/agendamentoRoutes');
 const horarioRoutes = require('./src/routes/horariosRoutes');
 
 // CORS
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://127.0.0.1:5501', 'https://www.indca.com.br'];
 app.use(cors({
-  origin: allowedOrigins,
+  origin: ['https://www.indca.com.br', 'http://127.0.0.1:5501'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
+
 
 // Rotas
 app.use('/usuarios', usuarioRoutes);
