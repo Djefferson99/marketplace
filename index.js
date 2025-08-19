@@ -22,12 +22,12 @@ app.use(cors({
 }));
 
 // Rotas
-app.use('/api/usuarios', usuarioRoutes);
-app.use('/api/servicos', servicoRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/empresas', empresaRoutes);
-app.use('/api/agendamentos', agendamentoRoutes);
-app.use('/api/horarios', horarioRoutes);
+app.use('/usuarios', usuarioRoutes);
+app.use('/servicos', servicoRoutes);
+app.use('/auth', authRoutes);
+app.use('/empresas', empresaRoutes);
+app.use('/agendamentos', agendamentoRoutes);
+app.use('/horarios', horarioRoutes);
 
 app.get('/', (req, res) => {
   res.send(`API Marketplace online ✅ Porta ${port}`);
