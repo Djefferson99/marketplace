@@ -2,15 +2,14 @@ const Empresa = require('../models/empresaModel');
 
 const empresaController = {
   create: async (req, res) => {
-    console.log('📁 req.file =', req.file);   // <— veja o que chega aqui
+    console.log('📁 req.file =', req.file);   
     console.log('📄 req.body =', req.body);
 
     try {
-      const empresaData = req.body;
-      if (req.file) {
-        // salva o nome do arquivo no campo foto_perfil
-        empresaData.foto_perfil = req.file.filename;
-      }
+      const empresaData = { ...req.body };
+      if (req.file) empresaData.foto_perfil = req.file.filename;
+      else if (req.body.foto_perfil) empresaData.foto_perfil = req.body.foto_perfil;
+
       const empresa = await Empresa.create(empresaData);
       res.status(201).json(empresa);
     } catch (error) {
@@ -22,13 +21,16 @@ const empresaController = {
   update: async (req, res) => {
     try {
       const { id } = req.params;
-      const empresaData = req.body;
-      if (req.file) {
-        empresaData.foto_perfil = req.file.filename;
-      }
+      const empresaData = { ...req.body };
+      if (req.file) empresaData.foto_perfil = req.file.filename;
+      else if (req.body.foto_perfil) empresaData.foto_perfil = req.body.foto_perfil;
+
       const empresa = await Empresa.update(id, empresaData);
+      if (!empresa) return res.status(404).json({ message: 'Empresa não encontrada' });
+
       res.status(200).json(empresa);
     } catch (error) {
+      console.error('Erro no update empresa:', error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -38,6 +40,7 @@ const empresaController = {
       const empresas = await Empresa.findAll();
       res.status(200).json(empresas);
     } catch (error) {
+      console.error('Erro no getAll empresa:', error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -46,12 +49,10 @@ const empresaController = {
     try {
       const { usuario_id } = req.params;
       const empresa = await Empresa.findByUsuarioId(usuario_id);
-      if (empresa) {
-        res.status(200).json(empresa);
-      } else {
-        res.status(404).json({ message: 'Empresa não encontrada para este usuário' });
-      }
+      if (!empresa) return res.status(404).json({ message: 'Empresa não encontrada para este usuário' });
+      res.status(200).json(empresa);
     } catch (error) {
+      console.error('Erro no getByUsuarioId:', error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -60,12 +61,10 @@ const empresaController = {
     try {
       const { id } = req.params;
       const empresa = await Empresa.findById(id);
-      if (empresa) {
-        res.status(200).json(empresa);
-      } else {
-        res.status(404).json({ message: 'Empresa não encontrada' });
-      }
+      if (!empresa) return res.status(404).json({ message: 'Empresa não encontrada' });
+      res.status(200).json(empresa);
     } catch (error) {
+      console.error('Erro no getById:', error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -73,12 +72,14 @@ const empresaController = {
   delete: async (req, res) => {
     try {
       const { id } = req.params;
-      await Empresa.delete(id);
-      res.status(204).send();
+      const deleted = await Empresa.delete(id);
+      if (!deleted) return res.status(404).json({ message: 'Empresa não encontrada' });
+      res.status(200).json({ message: 'Empresa deletada com sucesso' });
     } catch (error) {
+      console.error('Erro no delete empresa:', error);
       res.status(500).json({ error: error.message });
     }
-  }
+  },
 };
 
 module.exports = empresaController;

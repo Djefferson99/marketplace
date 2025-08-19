@@ -4,7 +4,7 @@ const Empresa = {
   create: async (empresa) => {
     const {
       usuario_id, nome_empresa, apresentacao, descricao,
-      site, instagram, linkedin, facebook, youtube, foto_perfil
+      site, instagram, linkedin, facebook, youtube, foto_perfil = null
     } = empresa;
 
     const result = await db.query(
@@ -50,7 +50,8 @@ const Empresa = {
   },
 
   delete: async (id) => {
-    await db.query('DELETE FROM empresas WHERE id = $1', [id]);
+    const result = await db.query('DELETE FROM empresas WHERE id = $1 RETURNING *', [id]);
+    return result.rows[0];
   }
 };
 

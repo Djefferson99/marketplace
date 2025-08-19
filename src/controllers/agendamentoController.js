@@ -52,7 +52,7 @@ console.log(resend)
           <li>Hora: ${hora}</li>
         </ul>
       `
-    });
+    }); console.log("Email enviado!");
 
     // // WhatsApp para cliente
     // try{
